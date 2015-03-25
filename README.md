@@ -23,8 +23,8 @@ repos:
 # a change command must conform to the following rules:
 # - it takes in one positional argument: the path to a repo to examine
 # - it either
-#   (a) make changes to files within the repo, output a commit message to stdout, and exit with code 0
-#   (b) exit with a nonzero exit code
+#   (a) makes changes to files within the repo, outputs a commit message to stdout, and exits with code 0
+#   (b) exits with a nonzero exit code
 change_cmd:
   - path: "/path/to/the/program"
     args: ["-a", "flag"]
