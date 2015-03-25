@@ -1,0 +1,17 @@
+image: bradrydzewski/go:1.4
+script:
+  - make test
+publish:
+  github:
+    branch: master
+    script:
+      - go get github.com/mitchelh/gox
+      - $GOPATH/bin/gox -build-toolchain -os linux  -arch amd64
+      - $GOPATH/bin/gox -build-toolchain -os darwin -arch amd64
+      - make release
+    artifacts:
+      - release
+    tag: v$(cat VERSION)
+    token: $$github_token
+    user: Clever
+    repo: gitbot
