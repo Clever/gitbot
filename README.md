@@ -41,6 +41,12 @@ post_cmds:
     args: ["pull-request", "-m", "Implemented feature X", "-b", "Clever:master", "-h", "Clever:add-something-trivial"]
 ```
 
+## Tips
+
+* Start small: run on a single repository to start.
+* Start with a single no-op `post_cmd` and run `gitbot` with `GITBOT_LEAVE_TEMPDIRS=1`.
+This lets you examine the side effects of the change command without any consequences.
+
 ## Note about using `hub`
 
 [hub](https://github.com/github/hub) is very useful as a `post_cmd`.
@@ -61,7 +67,7 @@ github.com:
 ## Example use cases
 
 - update the version of a dependency to a new version
-- run gofmt/pylint on all *.go/*.py files
+- run static analysis tools (e.g. linters)
 - add a license/contributing.md to many repos
 - optimize images
 - programmatically change a common configuration file present in many repos
