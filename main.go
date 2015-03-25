@@ -67,12 +67,12 @@ func main() {
 		os.Exit(0)
 	}
 
-	if len(flag.Args()) != 2 {
+	if len(flag.Args()) != 1 {
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	cfgfile, err := os.Open(flag.Args()[1])
+	cfgfile, err := os.Open(flag.Args()[0])
 	if err != nil {
 		log.Fatal(err)
 	}
