@@ -5,8 +5,8 @@ gitbot lets you programmatically make changes to many git repositories.
 ## Motivation
 
 Clever has a service-oriented architecture where each service is its own git repository.
-This lets us develop quickly on changes that are local to a specific service.
-However, there are some changes (see examples below) that we'd like to make across many services.
+This lets us quickly develop changes that are limited to a single service.
+However, there are some changes (see examples below) that need to be made across many services.
 `gitbot` takes the pain out of making changes across many repos.
 
 ## Usage
@@ -38,7 +38,7 @@ post_cmds:
   - path: "git"
     args: ["push", "origin", "HEAD:add-something-trivial"]
   - path: "hub"
-    args: ["pull-request", "-m", "Implemented feature X", "-b", "Clever:master", "-h", "Clever:add-something-trivial"]
+    args: ["pull-request", "-m", "Added something trivial", "-b", "Clever:master", "-h", "Clever:add-something-trivial"]
 ```
 
 ## Tips
