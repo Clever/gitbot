@@ -4,7 +4,7 @@ SUBPKGS :=
 PKGS := $(PKG) $(SUBPKGS)
 GODEP := $(GOPATH)/bin/godep
 GOLINT := $(GOPATH)/bin/golint
-.PHONY: deps test $(PKGS)
+.PHONY: deps test $(PKGS) build
 
 test: $(PKGS)
 
@@ -18,6 +18,9 @@ $(GOLINT):
 deps: $(GODEP)
 	go get ./...
 	$(GODEP) save -r
+
+build:
+	go build $(PKG)
 
 $(PKGS): $(GOLINT) deps
 	gofmt -w=true $(GOPATH)/src/$@/*.go
