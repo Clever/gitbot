@@ -12,7 +12,7 @@ BUILDS := \
 COMPRESSED_BUILDS := $(BUILDS:%=%.tar.gz)
 RELEASE_ARTIFACTS := $(COMPRESSED_BUILDS:build/%=release/%)
 
-.PHONY: deps test $(PKGS) build clean
+.PHONY: test $(PKGS) build clean
 
 test: $(PKGS)
 
@@ -23,14 +23,14 @@ $(GOLINT):
 	go get github.com/golang/lint/golint
 
 
-deps: $(GODEP)
+Godeps: $(GODEP)
 	go get $(PKGS)
 	$(GODEP) save -r
 
 build:
 	go build $(PKG)
 
-$(PKGS): $(GOLINT) version.go deps
+$(PKGS): $(GOLINT) version.go
 	gofmt -w=true $(GOPATH)/src/$@/*.go
 	$(GOLINT) $(GOPATH)/src/$@/*.go
 ifeq ($(COVERAGE),1)
@@ -44,6 +44,7 @@ build/*: version.go
 version.go: VERSION
 	echo 'package main' > version.go
 	echo '' >> version.go
+	echo '// Version of gitbot' >> version.go
 	echo 'const Version = "$(VERSION)"' >> version.go
 build/$(EXECUTABLE)-v$(VERSION)-darwin-amd64:
 	GOARCH=amd64 GOOS=darwin go build -o "$@/$(EXECUTABLE)"
