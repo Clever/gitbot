@@ -9,11 +9,13 @@ import (
 	yaml "github.com/Clever/gitbot/Godeps/_workspace/src/gopkg.in/yaml.v2"
 )
 
+// Command represents a command to run.
 type Command struct {
 	Path string
 	Args []string
 }
 
+// Validate the command is usable.
 func (c Command) Validate() error {
 	if c.Path == "" {
 		return fmt.Errorf("command must specify 'path'")
@@ -21,12 +23,14 @@ func (c Command) Validate() error {
 	return nil
 }
 
+// Config for gitbot.
 type Config struct {
 	Repos     []string  `yaml:"repos"`
 	ChangeCmd Command   `yaml:"change_cmd"`
 	PostCmds  []Command `yaml:"post_cmds"`
 }
 
+// Validate that the config is usable.
 func (c Config) Validate() error {
 	if len(c.Repos) == 0 {
 		return fmt.Errorf("config must contain a non-empty 'repos' list")
