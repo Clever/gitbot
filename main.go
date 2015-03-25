@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	yaml "gopkg.in/yaml.v2"
+	yaml "github.com/Clever/gitbot/Godeps/_workspace/src/gopkg.in/yaml.v2"
 )
 
 type Command struct {
@@ -61,8 +61,7 @@ func main() {
 	}
 	var cfg Config
 	if err := yaml.Unmarshal(cfgfiledata, &cfg); err != nil {
-		fmt.Fprintf(os.Stderr, err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	log.Printf("loaded config: %s", cfg)
