@@ -1,18 +1,21 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 
 	yaml "github.com/Clever/gitbot/Godeps/_workspace/src/gopkg.in/yaml.v2"
 )
 
 // Command represents a command to run.
 type Command struct {
-	Path string
-	Args []string
+	Path string   `yaml:"path"`
+	Args []string `yaml:"args"`
 }
 
 // Validate the command is usable.
@@ -63,11 +66,71 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	var cfg Config
 	if err := yaml.Unmarshal(cfgfiledata, &cfg); err != nil {
 		log.Fatal(err)
 	}
+	if err := cfg.Validate(); err != nil {
+		log.Fatal(err)
+	}
 
-	log.Printf("loaded config: %s", cfg)
+	for _, repo := range cfg.Repos {
+		// clone repo to temp directory
+		tempdir, err := ioutil.TempDir(os.TempDir(), "")
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("%s: cloning to %s", repo, tempdir)
+		if os.Getenv("GITBOT_LEAVE_TEMPDIRS") == "" {
+			defer os.RemoveAll(tempdir)
+		}
+		clonecmd := exec.Command("git", "clone", "--depth", "1", repo, tempdir)
+		clonecmd.Dir = tempdir
+		clonecmd.Stdout = os.Stdout
+		clonecmd.Stderr = os.Stderr
+		if err := clonecmd.Run(); err != nil {
+			log.Fatalf("%s: error cloning: %s", repo, err)
+		}
 
+		// make changes
+		log.Printf("%s: making changes", repo)
+		changecmd := exec.Command(cfg.ChangeCmd.Path, append(cfg.ChangeCmd.Args, tempdir)...)
+		var changecmdstdout bytes.Buffer
+		changecmd.Stdout = io.MultiWriter(os.Stdout, &changecmdstdout)
+		changecmd.Stderr = os.Stderr
+		if err := changecmd.Run(); err != nil {
+			log.Printf("%s: no changes to make", repo)
+			continue
+		}
+
+		// commit changes
+		log.Printf("%s: committing changes", repo)
+		gitaddcmd := exec.Command("git", "add", "-A")
+		gitaddcmd.Dir = tempdir
+		gitaddcmd.Stdout = os.Stdout
+		gitaddcmd.Stderr = os.Stderr
+		if err := gitaddcmd.Run(); err != nil {
+			log.Fatalf("%s: error adding: %s", repo, err)
+		}
+		commitcmd := exec.Command("git", "commit", "-m", changecmdstdout.String())
+		commitcmd.Dir = tempdir
+		commitcmd.Stdout = os.Stdout
+		commitcmd.Stderr = os.Stderr
+		if err := commitcmd.Run(); err != nil {
+			log.Fatalf("%s: error committing: %s", repo, err)
+		}
+
+		// run post commands
+		log.Printf("%s: running post commands", repo)
+		for _, postcmd := range cfg.PostCmds {
+			cmd := exec.Command(postcmd.Path, postcmd.Args...)
+			cmd.Dir = tempdir
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			if err := cmd.Run(); err != nil {
+				log.Fatalf("%s: error running post command: %s", repo, err)
+			}
+		}
+	}
 }
