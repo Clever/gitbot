@@ -62,7 +62,7 @@ github.com:
 
 ## Install
 
-(TODO) `gitbot` can be downloaded from the [releases]() page.
+`gitbot` can be downloaded from the [releases](https://github.com/Clever/gitbot/releases) page.
 
 ## Example use cases
 
