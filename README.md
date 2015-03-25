@@ -14,7 +14,7 @@ However, there are some changes (see examples below) that we'd like to make acro
 `gitbot` takes in one argument: a path to a config file.
 The config file is YAML of the following form:
 
-```
+```yaml
 # repos is a list of repositories to examine, e.g. "git@github.com:Clever/gitbot.git"
 # the format of each value here must be passable to `git clone`
 repos:
