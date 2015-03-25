@@ -30,7 +30,7 @@ deps: $(GODEP)
 build:
 	go build $(PKG)
 
-$(PKGS): $(GOLINT) deps
+$(PKGS): $(GOLINT) deps version.go
 	gofmt -w=true $(GOPATH)/src/$@/*.go
 	$(GOLINT) $(GOPATH)/src/$@/*.go
 ifeq ($(COVERAGE),1)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -53,11 +54,25 @@ func (c Config) Validate() error {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		log.Fatal("usage: gitbot [config]")
+	version := flag.Bool("version", false, "Shows version an exits")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [config]:\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Flags: \n")
+		flag.PrintDefaults()
+	}
+	flag.Parse()
+
+	if *version {
+		fmt.Printf("gitbot %s\n", Version)
+		os.Exit(0)
 	}
 
-	cfgfile, err := os.Open(os.Args[1])
+	if len(flag.Args()) != 2 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	cfgfile, err := os.Open(flag.Args()[1])
 	if err != nil {
 		log.Fatal(err)
 	}
