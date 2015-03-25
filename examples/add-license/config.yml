@@ -3,9 +3,7 @@ repos:
 change_cmd:
   path: "./add_license.sh"
 post_cmds:
-  - path: "echo"
-    args: ["asdfasdf"]
-  #- path: "git"
-  #  args: ["push", "origin", "HEAD:add-license"]
-  #- path: "hub"
-  #  args: ["pull-request", "-m", "Add license", "-b", "rgarcia:master", "-h", "rgarcia:add-license"]
+  - path: "git"
+    args: ["push", "-f", "origin", "HEAD:add-license"]
+  - path: "hub"
+    args: ["pull-request", "-m", "Add license", "-b", "rgarcia:master", "-h", "rgarcia:add-license"]
