@@ -24,7 +24,7 @@ $(GOLINT):
 
 
 deps: $(GODEP)
-	go get ./...
+	go get $(PKGS)
 	$(GODEP) save -r
 
 build:
