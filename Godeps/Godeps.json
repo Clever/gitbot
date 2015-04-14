@@ -1,7 +1,11 @@
 {
 	"ImportPath": "github.com/Clever/gitbot",
-	"GoVersion": "go1.4.1",
+	"GoVersion": "go1.4",
 	"Deps": [
+		{
+			"ImportPath": "github.com/stretchr/testify/assert",
+			"Rev": "2160c81a963bc827f650a9d420263d05d35bb97e"
+		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
 			"Rev": "49c95bdc21843256fb6c4e0d370a05f24a0bf213"

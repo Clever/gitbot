@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/Clever/gitbot/Godeps/_workspace/src/github.com/stretchr/testify/assert"
 )
 
 type normalizePathTestCase struct {
