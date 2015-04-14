@@ -3,7 +3,8 @@ script:
   - make test
 publish:
   github:
-    branch: master
+    when:
+      branch: master
     script:
       - go get github.com/mitchellh/gox
       - $GOPATH/bin/gox -build-toolchain -os linux  -arch amd64
