@@ -26,6 +26,7 @@ repos:
 #   (a) makes changes to files within the repo, outputs a commit message to stdout, and exits with code 0
 #   (b) exits with a nonzero exit code
 change_cmd:
+# command paths can either be absolute paths, or paths relative to the configuration file.
   path: "/path/to/the/program"
   args: ["-a", "flag"]
 # post_cmds is a list of programs to run on each repo if changes have been made.

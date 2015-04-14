@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 
 	yaml "github.com/Clever/gitbot/Godeps/_workspace/src/gopkg.in/yaml.v2"
 )
@@ -32,6 +34,15 @@ type Config struct {
 	Repos     []string  `yaml:"repos"`
 	ChangeCmd Command   `yaml:"change_cmd"`
 	PostCmds  []Command `yaml:"post_cmds"`
+}
+
+// NormalizePath will return an absolute path from a relative one, with
+// the assumption that is is relative to the location of the configuration file.
+func NormalizePath(configPath, commandPath string) string {
+	if !strings.HasPrefix(commandPath, ".") {
+		return commandPath
+	}
+	return filepath.Join(filepath.Dir(configPath), commandPath)
 }
 
 // Validate that the config is usable.
@@ -72,7 +83,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	cfgfile, err := os.Open(flag.Args()[0])
+	cfgfilePath := flag.Args()[0]
+	cfgfile, err := os.Open(cfgfilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,7 +122,8 @@ func main() {
 
 		// make changes
 		log.Printf("%s: making changes", repo)
-		changecmd := exec.Command(cfg.ChangeCmd.Path, append(cfg.ChangeCmd.Args, tempdir)...)
+		commandPath := NormalizePath(cfgfilePath, cfg.ChangeCmd.Path)
+		changecmd := exec.Command(commandPath, append(cfg.ChangeCmd.Args, tempdir)...)
 		var changecmdstdout bytes.Buffer
 		changecmd.Stdout = io.MultiWriter(os.Stdout, &changecmdstdout)
 		changecmd.Stderr = os.Stderr
@@ -139,7 +152,8 @@ func main() {
 		// run post commands
 		log.Printf("%s: running post commands", repo)
 		for _, postcmd := range cfg.PostCmds {
-			cmd := exec.Command(postcmd.Path, postcmd.Args...)
+			postcmdPath := NormalizePath(cfgfilePath, postcmd.Path)
+			cmd := exec.Command(postcmdPath, postcmd.Args...)
 			cmd.Dir = tempdir
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
