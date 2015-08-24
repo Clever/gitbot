@@ -47,6 +47,7 @@ post_cmds:
 * Start small: run on a single repository to start.
 * Start with a single no-op `post_cmd` and run `gitbot` with `GITBOT_LEAVE_TEMPDIRS=1`.
 This lets you examine the side effects of the change command without any consequences.
+* Use `git diff` as a `post_cmd` to see the effect of the script.
 
 ## Note about using `hub`
 
