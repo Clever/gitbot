@@ -74,7 +74,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Printf("gitbot %s\n", Version)
+		fmt.Printf("gitbot %s\n", version)
 		os.Exit(0)
 	}
 
