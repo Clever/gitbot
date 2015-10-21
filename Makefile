@@ -12,6 +12,13 @@ BUILDS := \
 COMPRESSED_BUILDS := $(BUILDS:%=%.tar.gz)
 RELEASE_ARTIFACTS := $(COMPRESSED_BUILDS:build/%=release/%)
 
+GOVERSION := $(shell go version | grep 1.5)
+ifeq "$(GOVERSION)" ""
+  $(error must be running Go version 1.5)
+endif
+export GO15VENDOREXPERIMENT = 1
+
+
 .PHONY: test $(PKGS) build clean
 
 test: $(PKGS)
@@ -22,23 +29,14 @@ $(GODEP):
 $(GOLINT):
 	go get github.com/golang/lint/golint
 
-
-Godeps: $(GODEP)
-	go get $(PKGS)
-	$(GODEP) save -r
-
 build:
 	go build $(PKG)
 
 $(PKGS): $(GOLINT) version.go
 	gofmt -w=true $(GOPATH)/src/$@/*.go
 	$(GOLINT) $(GOPATH)/src/$@/*.go
-ifeq ($(COVERAGE),1)
-	go test -cover -coverprofile=$(GOPATH)/src/$@/c.out $@ -test.v
-	go tool cover -html=$(GOPATH)/src/$@/c.out
-else
+	go vet $@
 	go test -v $@
-endif
 
 build/*: version.go
 version.go: VERSION
