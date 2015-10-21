@@ -19,16 +19,16 @@ The config file is YAML of the following form:
 # the format of each value here must be passable to `git clone`
 repos:
   - git@github.com:Clever/aviator.git
-# change_cmd describes the program that will be invoked on each repo.
+# change_cmds describes the programs that will be invoked on each repo.
 # a change command must conform to the following rules:
 # - it takes in one positional argument: the path to a repo to examine
 # - it either
 #   (a) makes changes to files within the repo, outputs a commit message to stdout, and exits with code 0
 #   (b) exits with a nonzero exit code
-change_cmd:
-# command paths can either be absolute paths, or paths relative to the configuration file.
-  path: "/path/to/the/program"
-  args: ["-a", "flag"]
+change_cmds:
+  # command paths can either be absolute paths, or paths relative to the configuration file.
+  - path: "/path/to/the/program"
+    args: ["-a", "flag"]
 # post_cmds is a list of programs to run on each repo if changes have been made.
 # use post_cmds to do things like pushing branches to github, opening PRs, etc.
 # post_cmds are run within the directory where a repository has been cloned.

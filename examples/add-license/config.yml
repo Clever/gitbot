@@ -1,7 +1,7 @@
 repos:
   - "git@github.com:Clever/gitbot.git"
-change_cmd:
-  path: "./add_license.sh"
+change_cmds:
+  - path: "./add_license.sh"
 post_cmds:
   - path: "git"
     args: ["push", "-f", "origin", "HEAD:add-license"]
