@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	yaml "github.com/Clever/gitbot/Godeps/_workspace/src/gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Command represents a command to run.
