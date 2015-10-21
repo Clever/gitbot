@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Clever/gitbot/Godeps/_workspace/src/gopkg.in/yaml.v2"
 	. "gopkg.in/check.v1"
+	"gopkg.in/yaml.v2"
 	"net"
 	"os"
 )
