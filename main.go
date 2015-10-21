@@ -29,11 +29,16 @@ func (c Command) Validate() error {
 	return nil
 }
 
+type RepoChanges struct {
+	ChangeCmds []Commands `yaml:change_cmds`
+	PostCmds   []Commands `yaml:post_cmds`
+}
+
 // Config for gitbot.
 type Config struct {
-	Repos     []string  `yaml:"repos"`
-	ChangeCmd Command   `yaml:"change_cmd"`
-	PostCmds  []Command `yaml:"post_cmds"`
+	Repos     []string      `yaml:"repos"`
+	Changes   []RepoChanges `yaml:"repo_changes"`
+	FinalCmds []Command     `yaml:"final_cmds"`
 }
 
 // NormalizePath will return an absolute path from a relative one, with
