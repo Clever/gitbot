@@ -31,9 +31,9 @@ func (c Command) Validate() error {
 
 // Config for gitbot.
 type Config struct {
-	Repos     []string  `yaml:"repos"`
-	ChangeCmd Command   `yaml:"change_cmd"`
-	PostCmds  []Command `yaml:"post_cmds"`
+	Repos      []string  `yaml:"repos"`
+	ChangeCmds []Command `yaml:"change_cmds"`
+	PostCmds   []Command `yaml:"post_cmds"`
 }
 
 // NormalizePath will return an absolute path from a relative one, with
@@ -50,8 +50,10 @@ func (c Config) Validate() error {
 	if len(c.Repos) == 0 {
 		return fmt.Errorf("config must contain a non-empty 'repos' list")
 	}
-	if err := c.ChangeCmd.Validate(); err != nil {
-		return err
+	for _, changecmd := range c.ChangeCmds {
+		if err := changecmd.Validate(); err != nil {
+			return err
+		}
 	}
 	if len(c.PostCmds) == 0 {
 		return fmt.Errorf("config must contain a non-empty 'post_cmds' list")
@@ -122,31 +124,40 @@ func main() {
 
 		// make changes
 		log.Printf("%s: making changes", repo)
-		commandPath := NormalizePath(cfgfilePath, cfg.ChangeCmd.Path)
-		changecmd := exec.Command(commandPath, append(cfg.ChangeCmd.Args, tempdir)...)
-		var changecmdstdout bytes.Buffer
-		changecmd.Stdout = io.MultiWriter(os.Stdout, &changecmdstdout)
-		changecmd.Stderr = os.Stderr
-		if err := changecmd.Run(); err != nil {
-			log.Printf("%s: no changes to make", repo)
-			continue
+		noChangesMade := true
+		for _, changecmd := range cfg.ChangeCmds {
+			commandPath := NormalizePath(cfgfilePath, changecmd.Path)
+			changecmd := exec.Command(commandPath, append(changecmd.Args, tempdir)...)
+			var changecmdstdout bytes.Buffer
+			changecmd.Stdout = io.MultiWriter(os.Stdout, &changecmdstdout)
+			changecmd.Stderr = os.Stderr
+			if err := changecmd.Run(); err != nil {
+				log.Printf("%s: no changes to make", repo)
+				continue
+			}
+			noChangesMade = false
+
+			// commit changes
+			log.Printf("%s: committing changes", repo)
+			gitaddcmd := exec.Command("git", "add", "-A")
+			gitaddcmd.Dir = tempdir
+			gitaddcmd.Stdout = os.Stdout
+			gitaddcmd.Stderr = os.Stderr
+			if err := gitaddcmd.Run(); err != nil {
+				log.Fatalf("%s: error adding: %s", repo, err)
+			}
+			commitcmd := exec.Command("git", "commit", "-m", changecmdstdout.String())
+			commitcmd.Dir = tempdir
+			commitcmd.Stdout = os.Stdout
+			commitcmd.Stderr = os.Stderr
+			if err := commitcmd.Run(); err != nil {
+				log.Fatalf("%s: error committing: %s", repo, err)
+			}
 		}
 
-		// commit changes
-		log.Printf("%s: committing changes", repo)
-		gitaddcmd := exec.Command("git", "add", "-A")
-		gitaddcmd.Dir = tempdir
-		gitaddcmd.Stdout = os.Stdout
-		gitaddcmd.Stderr = os.Stderr
-		if err := gitaddcmd.Run(); err != nil {
-			log.Fatalf("%s: error adding: %s", repo, err)
-		}
-		commitcmd := exec.Command("git", "commit", "-m", changecmdstdout.String())
-		commitcmd.Dir = tempdir
-		commitcmd.Stdout = os.Stdout
-		commitcmd.Stderr = os.Stderr
-		if err := commitcmd.Run(); err != nil {
-			log.Fatalf("%s: error committing: %s", repo, err)
+		// don't run post commands if none of the change commands made a change
+		if noChangesMade {
+			continue
 		}
 
 		// run post commands
