@@ -32,6 +32,7 @@ func (c Command) Validate() error {
 // Config for gitbot.
 type Config struct {
 	Repos      []string  `yaml:"repos"`
+	BasePath   string    `yaml:"base_path"`
 	ChangeCmds []Command `yaml:"change_cmds"`
 	PostCmds   []Command `yaml:"post_cmds"`
 }
@@ -104,9 +105,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	base_path := cfg.BasePath
+
 	for _, repo := range cfg.Repos {
 		// clone repo to temp directory
-		tempdir, err := ioutil.TempDir(os.TempDir(), "")
+		tempdir, err := ioutil.TempDir(base_path+os.TempDir(), "")
 		if err != nil {
 			log.Fatal(err)
 		}
