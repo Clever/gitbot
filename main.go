@@ -68,7 +68,7 @@ func (c Config) Validate() error {
 }
 
 func main() {
-	version := flag.Bool("version", false, "Shows version an exits")
+	version := flag.Bool("version", false, "Shows version and exits")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [config]:\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "Flags: \n")
