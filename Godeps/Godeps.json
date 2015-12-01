@@ -2,7 +2,7 @@
 	"ImportPath": "github.com/Clever/gitbot",
 	"GoVersion": "go1.5.1",
 	"Packages": [
-		"./..."
+		"github.com/Clever/gitbot"
 	],
 	"Deps": [
 		{
