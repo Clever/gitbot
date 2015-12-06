@@ -1,9 +1,6 @@
 SHELL := /bin/bash
 PKG := github.com/Clever/gitbot
-SUBPKGS := 
-PKGS := $(PKG) $(SUBPKGS)
-GODEP := $(GOPATH)/bin/godep
-GOLINT := $(GOPATH)/bin/golint
+PKGS := $(shell go list ./... | grep -v /vendor)
 EXECUTABLE := gitbot
 VERSION := $(shell cat VERSION)
 BUILDS := \
@@ -18,19 +15,22 @@ ifeq "$(GOVERSION)" ""
 endif
 export GO15VENDOREXPERIMENT = 1
 
+.PHONY: test $(PKGS) build clean vendor
 
-.PHONY: test $(PKGS) build clean
+all: test build
 
-test: $(PKGS)
-
-$(GODEP):
-	go get github.com/tools/godep
-
+GOLINT := $(GOPATH)/bin/golint
 $(GOLINT):
 	go get github.com/golang/lint/golint
 
+GODEP := $(GOPATH)/bin/godep
+$(GODEP):
+	go get -u github.com/tools/godep
+
 build:
-	go build $(PKG)
+	go build -o bin/$(EXECUTABLE) $(PKG)
+
+test: $(PKGS)
 
 $(PKGS): $(GOLINT) version.go
 	gofmt -w=true $(GOPATH)/src/$@/*.go
@@ -60,3 +60,7 @@ release: $(RELEASE_ARTIFACTS)
 
 clean:
 	rm -rf build release
+
+vendor: $(GODEP)
+	$(GODEP) save $(PKGS)
+	find vendor/ -path '*/vendor' -type d | xargs -IX rm -r X # remove any nested vendor directories

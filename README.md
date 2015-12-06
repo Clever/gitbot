@@ -76,3 +76,8 @@ github.com:
 - add a license/contributing.md to many repos
 - optimize images
 - programmatically change a common configuration file present in many repos
+
+
+## Vendoring
+
+Please view the [dev-handbook for instructions](https://github.com/Clever/dev-handbook/blob/master/golang/godep.md).
