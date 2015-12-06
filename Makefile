@@ -17,6 +17,8 @@ export GO15VENDOREXPERIMENT = 1
 
 .PHONY: test $(PKGS) build clean vendor
 
+all: test build
+
 GOLINT := $(GOPATH)/bin/golint
 $(GOLINT):
 	go get github.com/golang/lint/golint
