@@ -1,3 +1,6 @@
+include golang.mk
+.DEFAULT_GOAL := test # override default goal set in library makefile
+
 SHELL := /bin/bash
 PKG := github.com/Clever/gitbot
 PKGS := $(shell go list ./... | grep -v /vendor)
@@ -9,34 +12,22 @@ BUILDS := \
 COMPRESSED_BUILDS := $(BUILDS:%=%.tar.gz)
 RELEASE_ARTIFACTS := $(COMPRESSED_BUILDS:build/%=release/%)
 
-GOVERSION := $(shell go version | grep 1.5)
-ifeq "$(GOVERSION)" ""
-  $(error must be running Go version 1.5)
-endif
-export GO15VENDOREXPERIMENT = 1
+$(eval $(call golang-version-check,1.5))
 
-.PHONY: test $(PKGS) build clean vendor
+.PHONY: all test $(PKGS) build clean vendor
 
 all: test build
 
-GOLINT := $(GOPATH)/bin/golint
-$(GOLINT):
-	go get github.com/golang/lint/golint
+test: version.go $(PKGS)
 
-GODEP := $(GOPATH)/bin/godep
-$(GODEP):
-	go get -u github.com/tools/godep
+$(PKGS): golang-test-all-strict-deps
+	$(call golang-test-all-strict,$@)
+
+vendor: golang-godep-vendor-deps
+	$(call golang-godep-vendor,$(PKGS))
 
 build:
 	go build -o bin/$(EXECUTABLE) $(PKG)
-
-test: $(PKGS)
-
-$(PKGS): $(GOLINT) version.go
-	gofmt -w=true $(GOPATH)/src/$@/*.go
-	$(GOLINT) $(GOPATH)/src/$@/*.go
-	go vet $@
-	go test -v $@
 
 build/*: version.go
 version.go: VERSION
@@ -60,7 +51,3 @@ release: $(RELEASE_ARTIFACTS)
 
 clean:
 	rm -rf build release
-
-vendor: $(GODEP)
-	$(GODEP) save $(PKGS)
-	find vendor/ -path '*/vendor' -type d | xargs -IX rm -r X # remove any nested vendor directories
