@@ -105,11 +105,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	base_path := cfg.BasePath
+	basePath := cfg.BasePath
 
 	for _, repo := range cfg.Repos {
 		// clone repo to temp directory
-		tempdir, err := ioutil.TempDir(base_path+os.TempDir(), "")
+		tempdir, err := ioutil.TempDir(basePath+os.TempDir(), "")
 		if err != nil {
 			log.Fatal(err)
 		}
