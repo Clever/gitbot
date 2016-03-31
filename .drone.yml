@@ -1,14 +1,18 @@
+env:
+- REPORT_CARD_GITHUB_STATUS_TOKEN=$$report_card_github_status_token
+- REPORT_CARD_GITHUB_REPO_TOKEN=$$report_card_github_repo_token
 image: clever/drone-go:1.5
 script:
-  - make test
+- sudo pip install -q git+https://$REPORT_CARD_GITHUB_REPO_TOKEN@github.com/Clever/report-card.git; GITHUB_API_TOKEN=$REPORT_CARD_GITHUB_STATUS_TOKEN report-card --publish || true
+- make test
 publish:
   github:
     when:
       branch: master
     script:
-      - make release
+    - make release
     artifacts:
-      - release
+    - release
     tag: v$(cat VERSION)
     token: $$github_token
     user: Clever
