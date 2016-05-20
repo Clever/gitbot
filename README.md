@@ -54,9 +54,15 @@ This lets you examine the side effects of the change command without any consequ
 
 ## Note about using `hub`
 
-[hub](https://github.com/github/hub) is very useful as a `post_cmd`.
+[hub](https://github.com/github/hub) is very useful as a `post_cmd`, since it lets you open pull requests.
 However, it requires some setup.
-Specifically you will need to create a file `~/.config/hub` that contains an oauth token:
+
+To install `hub`, download a tarball from the `hub` [releases](https://github.com/github/hub/releases) page.
+After unpacking the tarball, navigate into the unpacked folder and run the `install` script: `sudo ./install`.
+This will copy the `hub` binary into `/usr/local/bin/`, man pages into `/usr/local/share`, etc.
+You can verify the installation by running `hub -h` or `man hub`.
+
+In order for `hub` to work for private GitHub repositories, you will need to create a file `~/.config/hub` that contains a GitHub oauth token:
 
 ```
 github.com:
@@ -64,6 +70,9 @@ github.com:
   oauth_token: <provision one by visiting https://github.com/settings/applications>
   protocol: https
 ```
+
+You can verify the setup by attempting to clone a private repository: `hub clone <user>/<private repo>`.
+
 
 ## Install
 
