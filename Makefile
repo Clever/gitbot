@@ -12,7 +12,7 @@ BUILDS := \
 COMPRESSED_BUILDS := $(BUILDS:%=%.tar.gz)
 RELEASE_ARTIFACTS := $(COMPRESSED_BUILDS:build/%=release/%)
 
-$(eval $(call golang-version-check,1.6))
+$(eval $(call golang-version-check,1.7))
 
 .PHONY: all test $(PKGS) build clean vendor
 
