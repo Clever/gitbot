@@ -19,15 +19,14 @@ The config file is YAML of the following form:
 # the format of each value here must be passable to `git clone`
 repos:
   - git@github.com:Clever/aviator.git
+# Basepath to prepend temp directories. Not including this option is okay and the program will assume ""
+base_path: "path/to/prepend/tmpdir"
 # change_cmds describes the programs that will be invoked on each repo.
 # a change command must conform to the following rules:
 # - it takes in one positional argument: the path to a repo to examine
 # - it either
 #   (a) makes changes to files within the repo, outputs a commit message to stdout, and exits with code 0
 #   (b) exits with a nonzero exit code
-
-# Basepath to prepend temp directories. Not including this option is okay and the program will assume ""
-base_path: "path/to/prepend/tmpdir"
 change_cmds:
   # command paths can either be absolute paths, or paths relative to the configuration file.
   - path: "/path/to/the/program"
