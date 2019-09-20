@@ -48,6 +48,7 @@ post_cmds:
 
 * Start small: run on a single repository to start.
 * Start with a single no-op `post_cmd` and run `gitbot` with `GITBOT_LEAVE_TEMPDIRS=1`.
+* Use `GITBOT_FULL_CLONE=1` to fully clone the repository. By default, only the latest commit will be cloned (using `git clone --depth 1`) for efficiency reasons. Cloning the full repository can allow you to do things like committing a change to more than one branch.
 This lets you examine the side effects of the change command without any consequences.
 * Use `git diff HEAD^ HEAD` as a `post_cmd` to see the commit that your change generated.
 

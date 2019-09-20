@@ -117,7 +117,11 @@ func main() {
 		if os.Getenv("GITBOT_LEAVE_TEMPDIRS") == "" {
 			defer os.RemoveAll(tempdir)
 		}
-		clonecmd := exec.Command("git", "clone", "--depth", "1", repo, tempdir)
+		if os.Getenv("GITBOT_FULL_CLONE") == "" {
+			clonecmd := exec.Command("git", "clone", "--depth", "1", repo, tempdir)
+		} else {
+			clonecmd := exec.Command("git", "clone", repo, tempdir)
+		}
 		clonecmd.Dir = tempdir
 		clonecmd.Stdout = os.Stdout
 		clonecmd.Stderr = os.Stderr
