@@ -51,5 +51,5 @@ clean:
 	rm -rf build release
 
 
-install_deps: golang-dep-vendor-deps
-	$(call golang-dep-vendor)
+install_deps:
+	go mod vendor
