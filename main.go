@@ -135,6 +135,7 @@ func main() {
 			changecmd.Stdout = io.MultiWriter(os.Stdout, &changecmdstdout)
 			changecmd.Stderr = os.Stderr
 			if err := changecmd.Run(); err != nil {
+				log.Printf("%s: error running change command: %s"", repo, err)
 				log.Printf("%s: no changes to make", repo)
 				continue
 			}
