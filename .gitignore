@@ -1,3 +1,5 @@
 *~
 version.go
 gitbot
+bin
+vendor

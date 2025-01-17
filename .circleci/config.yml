@@ -1,9 +1,9 @@
 version: 2
 jobs:
   build:
-    working_directory: /go/src/github.com/Clever/gitbot
+    working_directory: ~/go/src/github.com/Clever/gitbot
     docker:
-    - image: circleci/golang:1.13-stretch
+    - image: cimg:1.21
     environment:
       GOPRIVATE: github.com/Clever/*
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
