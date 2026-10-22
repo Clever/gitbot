@@ -3,9 +3,9 @@ kind: Component
 metadata:
   name: gitbot
   description: programmatically make changes to many git repositories
-  owner: unknown
+  owner: eng-infra
 spec:
   type: unknown
   lifecycle: production
-  owner: unknown
+  owner: eng-infra
   system: Clever
